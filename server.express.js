@@ -25,7 +25,7 @@ const url = `mongodb+srv://${process.env.USER}:${process.env.PASS}@cluster0.soif
 
 const client = new MongoClient(url);
 
-// connect to plant data set
+// connect to data sets
 let collection = null;
 let userCollection = null;
 
@@ -98,6 +98,55 @@ app.use(function (req, res, next) {
 
 app.get("/main.html", (req, res) => {
   res.render("main", { msg: "success you have logged in", layout: false });
+});
+
+// get user data
+app.get("/getUserData", async (req, res) => {
+  
+  try {
+    const username = req.session.username;
+    
+    if (!username) {
+      // Ensure the user is logged in
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    
+    const userData = await userCollection
+      .find({ username: req.session.username })
+      .toArray();
+
+    res.status(200).json(userData);
+    
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/updateMoney", async (req, res) => {
+  try {
+    const username = req.session.username;
+    const newMoneyValue = req.body.money;
+
+    if (!username || typeof newMoneyValue !== "number") {
+      return res.status(400).json({ error: "Invalid request data" });
+    }
+
+    // Update the user's money value in the database
+    const result = await userCollection.updateOne(
+      { username },
+      { $set: { money: newMoneyValue } }
+    );
+
+    if (result.modifiedCount === 1) {
+      return res.status(200).json({ success: true });
+    } else {
+      return res.status(500).json({ error: "Failed to update user data" });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 // Start the server
