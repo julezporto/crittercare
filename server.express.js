@@ -145,6 +145,7 @@ app.get("/getUserData", async (req, res) => {
   }
 });
 
+// update money value
 app.post("/updateMoney", async (req, res) => {
   try {
     const username = req.session.username;
@@ -158,6 +159,87 @@ app.post("/updateMoney", async (req, res) => {
     const result = await userCollection.updateOne(
       { username },
       { $set: { money: newMoneyValue } }
+    );
+
+    if (result.modifiedCount === 1) {
+      return res.status(200).json({ success: true });
+    } else {
+      return res.status(500).json({ error: "Failed to update user data" });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// update food value
+app.post("/updateFood", async (req, res) => {
+  try {
+    const username = req.session.username;
+    const newFoodValue = req.body.food;
+
+    if (!username || typeof newFoodValue !== "number") {
+      return res.status(400).json({ error: "Invalid request data" });
+    }
+
+    // Update the user's food value in the database
+    const result = await userCollection.updateOne(
+      { username },
+      { $set: { food: newFoodValue } }
+    );
+
+    if (result.modifiedCount === 1) {
+      return res.status(200).json({ success: true });
+    } else {
+      return res.status(500).json({ error: "Failed to update user data" });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// update exercise value
+app.post("/updateExercise", async (req, res) => {
+  try {
+    const username = req.session.username;
+    const newExerciseValue = req.body.exercise;
+
+    if (!username || typeof newExerciseValue !== "number") {
+      return res.status(400).json({ error: "Invalid request data" });
+    }
+
+    // Update the user's exercise value in the database
+    const result = await userCollection.updateOne(
+      { username },
+      { $set: { exercise: newExerciseValue } }
+    );
+
+    if (result.modifiedCount === 1) {
+      return res.status(200).json({ success: true });
+    } else {
+      return res.status(500).json({ error: "Failed to update user data" });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// update sleep value
+app.post("/updateSleep", async (req, res) => {
+  try {
+    const username = req.session.username;
+    const newSleepValue = req.body.sleep;
+
+    if (!username || typeof newSleepValue !== "number") {
+      return res.status(400).json({ error: "Invalid request data" });
+    }
+
+    // Update the user's sleep value in the database
+    const result = await userCollection.updateOne(
+      { username },
+      { $set: { sleep: newSleepValue } }
     );
 
     if (result.modifiedCount === 1) {
