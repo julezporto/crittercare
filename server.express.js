@@ -67,6 +67,10 @@ app.post("/create", async (req, res) => {
   }
 });
 
+app.get("/createUser", (req, res, next) => {
+  res.render("createUser", {msg: "", layout: false});
+});
+
 app.post("/login", async (req, res, next) => {
   user = req.body.username;
   let password = req.body.password;
