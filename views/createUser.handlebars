@@ -1,30 +1,24 @@
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Virtual Pet Game - Login</title>
+    <title>Virtual Pet Game - Create Account</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="js/main.js"></script>
     <link id="page-theme" rel="stylesheet" href="/css/sakura.css" />
     <link rel="stylesheet" href="css/accessible.css" />
     <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
   </head>
   <body>
-    <h1>
-      Log in
-    </h1>
-    <form action="/login" method="POST">
+    <h1>Create your account</h1>
+    <form action="/create" method="POST">
       <input type="text" name="username" placeholder="username" />
       <input type="password" name="password" placeholder="password" />
-      <input type="submit" value="login" />
-      <p id="tocreateaccount">
-        Don't have an account? Create one below.
-      </p>
+      <input type="submit" value="create" />
     </form>
-    
-    <form action="/createUser" method="GET">
-       <input type="submit" value="Create an account"/>
+    <p id="createAccountFail"></p>
+    <form action="/" method="GET">
+       <input type="submit" value="Back to login"/>
      </form>
-
-    {{{msg}}}
-
   </body>
 </html>
