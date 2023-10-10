@@ -55,6 +55,10 @@ app.post("/create", async (req, res) => {
   res.redirect("game.html");
 });
 
+app.get("/createUser", (req, res, next) => {
+  res.render("createUser", {msg: "", layout: false});
+});
+
 app.post("/login", async (req, res, next) => {
   const accounts = await client
     .db("FinalProjectWebware")
