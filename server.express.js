@@ -3,11 +3,13 @@ const express = require("express"),
   hbs = require("express-handlebars").engine,
   cookie = require("cookie-session"),
   app = express(),
-  port = process.env.PORT || 3000;
+  //mime = require("mime"),
+  dir = "public/",
+  port = 3000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static(dir));
 app.use(express.static("views"));
 
 app.engine("handlebars", hbs());
@@ -25,9 +27,10 @@ const url = `mongodb+srv://${process.env.USER}:${process.env.PASS}@cluster0.soif
 
 const client = new MongoClient(url);
 
-// connect to data sets
+// connect to plant data set
 let collection = null;
 let userCollection = null;
+let user = null;
 
 async function run() {
   await client.connect();
@@ -50,9 +53,18 @@ app.use((req, res, next) => {
 
 // user login
 app.post("/create", async (req, res) => {
-  const result = await userCollection.insertOne(req.body);
-  req.session.username = req.body.username;
-  res.redirect("game.html");
+  let username = req.body.username;
+  const userAlreadyCreated = await userCollection.findOne({
+    username: username,
+  });
+  if (userAlreadyCreated) {
+    //   let label = document.getElementById("createAccountFail")
+    //   label.innerHTML = "Username already used, please choose a different username"
+  } else {
+    const result = await userCollection.insertOne(req.body);
+    req.session.username = username;
+    res.redirect("game.html");
+  }
 });
 
 app.get("/createUser", (req, res, next) => {
@@ -60,6 +72,8 @@ app.get("/createUser", (req, res, next) => {
 });
 
 app.post("/login", async (req, res, next) => {
+  user = req.body.username;
+  let password = req.body.password;
   const accounts = await client
     .db("FinalProjectWebware")
     .collection("Users")
@@ -69,9 +83,9 @@ app.post("/login", async (req, res, next) => {
   req.session.login = false;
 
   accounts.forEach((e) => {
-    if (req.body.password === e.password && req.body.username === e.username) {
+    if (password === e.password && user === e.username) {
       req.session.login = true;
-      req.session.username = req.body.username;
+      req.session.username = user;
     }
   });
 
@@ -89,6 +103,10 @@ app.get("/", (req, res, next) => {
   res.render("index", { msg: "", layout: false });
 });
 
+app.get("/createUser", (req, res, next) => {
+  res.render("createUser", { msg: "", layout: false });
+});
+
 // add some middleware that always sends unauthenicaetd users to the login page
 app.use(function (req, res, next) {
   if (req.session.login === true) {
@@ -104,53 +122,25 @@ app.get("/main.html", (req, res) => {
   res.render("main", { msg: "success you have logged in", layout: false });
 });
 
-// get user data
-app.get("/getUserData", async (req, res) => {
-  
-  try {
-    const username = req.session.username;
-    
-    if (!username) {
-      // Ensure the user is logged in
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-    
-    const userData = await userCollection
-      .find({ username: req.session.username })
-      .toArray();
+// to insert document into database
+app.post("/addCritter", async (req, res) => {
+  let result = await collection.insertOne({
+    user: user,
+    name: req.body.name,
+    type: req.body.type,
+    lifepoints: req.body.lifepoints,
+  });
 
-    res.status(200).json(userData);
-    
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+  const userList = await collection.find({ user: user }).toArray();
+  userList.forEach((item) => {
+    console.log("add: " + JSON.stringify(Object.values(item)));
+  });
+  res.json(userList);
 });
 
-app.post("/updateMoney", async (req, res) => {
-  try {
-    const username = req.session.username;
-    const newMoneyValue = req.body.money;
-
-    if (!username || typeof newMoneyValue !== "number") {
-      return res.status(400).json({ error: "Invalid request data" });
-    }
-
-    // Update the user's money value in the database
-    const result = await userCollection.updateOne(
-      { username },
-      { $set: { money: newMoneyValue } }
-    );
-
-    if (result.modifiedCount === 1) {
-      return res.status(200).json({ success: true });
-    } else {
-      return res.status(500).json({ error: "Failed to update user data" });
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+app.get("/data", async (req, res) => {
+  const userList = await collection.find({ user: user }).toArray();
+  res.json(userList);
 });
 
 // Start the server

@@ -22,6 +22,10 @@
         <li>Give your critter the resources to survive</li>
         <li>Good luck!</li>
       </ol>
+      
+      <form action="/" method="GET">
+       <input type="submit" value="Logout"/>
+     </form>
     </header>
 
     <!-- Main -->
@@ -46,24 +50,15 @@
       <div class="money-resource-tracker">
         <h2>Money and Resource Tracker</h2>
         <button id="money-button">+ $$$</button><br />
-        <table id="money-resource-table">
-          <thead>
-            <tr>
-              <th id="money-col">$$$</th>
-              <th id="food-col">Food</th>
-              <th id="exercise-col">Exercise</th>
-              <th id="sleep-col">Sleep</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td id="money-val"></td>
-              <td id="food-val"></td>
-              <td id="exercise-val"></td>
-              <td id="sleep-val"></td>
-            </tr>
-          </tbody>
-        </table>
+        <thead>
+          <tr>
+            <th id="money-col">$$$</th>
+            <th id="food-col">Food</th>
+            <th id="exercise-col">Exercise</th>
+            <th id="sleep-col">Sleep</th>
+          </tr>
+        </thead>
+        <tbody id="tracker-table-body"></tbody>
       </div>
       <!-- Buy Critter -->
       <div class="buy-critter">
@@ -87,6 +82,7 @@
           </select>
           <br />
           <button id="buy-critter-button">Buy Critter (-$50)</button>
+          <p id="buyCritterFail"></p>
         </form>
       </div>
       <!-- Buy Resources -->
@@ -97,7 +93,7 @@
         <button id="buy-sleep-button">Buy Sleep (-$5)</button>
       </div>
     </main>
-
+    
     <!-- Footer -->
     <footer>
       <p>A-Term 2023 Webware Final Project</p>
