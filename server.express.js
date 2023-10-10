@@ -120,24 +120,18 @@ app.get("/main.html", (req, res) => {
 
 // to insert document into database
 app.post("/addCritter", async (req, res) => {
-  let critterAlreadyCreated = await collection.find({ user: user });
-  if (critterAlreadyCreated) {
-    let failLabel = document.getElementById("#buyCritterFail")
-    failLabel.innerHTML = "User already has a critter!"
-  } else {
-    let result = await collection.insertOne({
-      user: user,
-      name: req.body.name,
-      type: req.body.type,
-      lifepoints: req.body.lifepoints,
-    });
+  let result = await collection.insertOne({
+    user: user,
+    name: req.body.name,
+    type: req.body.type,
+    lifepoints: req.body.lifepoints,
+  });
 
-    const userList = await collection.find({ user: user }).toArray();
-    userList.forEach((item) => {
-      console.log("add: " + JSON.stringify(Object.values(item)));
-    });
-    res.json(userList);
-  }
+  const userList = await collection.find({ user: user }).toArray();
+  userList.forEach((item) => {
+    console.log("add: " + JSON.stringify(Object.values(item)));
+  });
+  res.json(userList);
 });
 
 app.get("/data", async (req, res) => {
