@@ -46,15 +46,24 @@
       <div class="money-resource-tracker">
         <h2>Money and Resource Tracker</h2>
         <button id="money-button">+ $$$</button><br />
-        <thead>
-          <tr>
-            <th id="money-col">$$$</th>
-            <th id="food-col">Food</th>
-            <th id="exercise-col">Exercise</th>
-            <th id="sleep-col">Sleep</th>
-          </tr>
-        </thead>
-        <tbody id="tracker-table-body"></tbody>
+        <table id="money-resource-table">
+          <thead>
+            <tr>
+              <th id="money-col">$$$</th>
+              <th id="food-col">Food</th>
+              <th id="exercise-col">Exercise</th>
+              <th id="sleep-col">Sleep</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="money-val"></td>
+              <td id="food-val"></td>
+              <td id="exercise-val"></td>
+              <td id="sleep-val"></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <!-- Buy Critter -->
       <div class="buy-critter">
