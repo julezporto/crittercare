@@ -54,6 +54,7 @@ app.use((req, res, next) => {
 // user login
 app.post("/create", async (req, res) => {
   let username = req.body.username;
+  user = username;
   const userAlreadyCreated = await userCollection.findOne({
     username: username,
   });
