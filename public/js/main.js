@@ -267,13 +267,53 @@ const showCritter = function (data) {
   let nameLabel = document.querySelector("#critter-name-display");
   let typeLabel = document.querySelector("#critter-type-display");
   let lifeLabel = document.querySelector("#critter-life-display");
-
+  let resultsTable = document.querySelector("#resultsTable");
+  resultsTable.innerHTML =
+    "<tr><th>Critter Name</th><th>Type</th><th>Life Points</th><th>Feed</th><th>Exercise</th><th>Sleep</th></tr>";
+  
   data.forEach((item) => {
     console.log("show results: " + JSON.stringify(Object.values(item)));
     nameLabel.innerHTML = "Critter Name: " + item.name;
     typeLabel.innerHTML = "Critter Type: " + item.type;
     lifeLabel.innerHTML = "Life Points: " + item.lifepoints;
+    formatTable(item, resultsTable);
   });
+};
+
+const formatTable = function (critter, resultsTable) {
+  console.log(resultsTable);
+  // create new row in table
+  const row = resultsTable.insertRow();
+  const cellName = row.insertCell(); // create new cell
+  cellName.innerHTML = critter.name; // add data to cell
+  const cellType = row.insertCell(); // create new cell
+  cellType.innerHTML = critter.type; // add data to cell
+  const cellLifePoints = row.insertCell(); // create new cell
+  cellLifePoints.innerHTML = critter.lifepoints; // add data to cell
+  // in last column, create a button to remove items
+  row.innerHTML += "<td>" + `<button id="feedButton" onclick="feed(\'${critter._id}\')">Feed (+5)</button>` + "</td>";
+  row.innerHTML += "<td>" + `<button id="exerciseButton" onclick="exercise(\'${critter._id}\')">Exercise (+3)</button>` + "</td>";
+  row.innerHTML += "<td>" + `<button id="sleepButton" onclick="sleep(\'${critter._id}\')">Sleep (+1)</button>` + "</td>";
+};
+
+const feed = async function (id) {  
+  const newData = {
+    updateId: id,
+    lifepoints
+  };
+  
+  let body = JSON.stringify(newData);
+  const updatedItem = await fetch("/update", {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
+  const data = await updatedItem.json();
+  console.log("update: " + newData.updateId);
+  console.log("after update: " + JSON.stringify(data));
+
+  //Display table of data
+  showResults(data, false);
 };
 
 // initialize the page
