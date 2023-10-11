@@ -61,7 +61,17 @@ app.post("/create", async (req, res) => {
     //   let label = document.getElementById("createAccountFail")
     //   label.innerHTML = "Username already used, please choose a different username"
   } else {
-    const result = await userCollection.insertOne(req.body);
+    
+    const result = await userCollection.insertOne(
+      {
+        username: username,
+        password: req.body.password,
+        money: 0,
+        food: 0,
+        exercise: 0,
+        sleep: 0
+      }
+    );
     req.session.username = username;
     res.redirect("game.html");
   }
