@@ -169,6 +169,7 @@ const addFood = () => {
     console.log("Food has been successfully added.");
   } else {
     console.log("Food has not been added.");
+    window.alert("You do not have enough money to buy food.");
   }
 };
 
@@ -197,6 +198,7 @@ const addExercise = () => {
     console.log("Exercise has been successfully added.");
   } else {
     console.log("Exercise has not been added.");
+    window.alert("You do not have enough money to buy exercise.");
   }
 };
 
@@ -225,41 +227,59 @@ const addSleep = () => {
     console.log("Sleep has been successfully added.");
   } else {
     console.log("Sleep has not been added.");
+    window.alert("You do not have enough money to buy sleep.");
   }
 };
 
 // submit a critter
 const submit = async function (event) {
   event.preventDefault();
-  const name = document.querySelector("#critter-name");
-  const type = document.querySelector("#critter-type");
-  const lifepoints = 0;
+  // Check to see if user has enough money to buy critter
+  if (money >= 50) {
+    const name = document.querySelector("#critter-name");
+    const type = document.querySelector("#critter-type");
+    const lifepoints = 100;
 
-  //Validation error messages
-  if (name.value === "") {
-    window.alert("Please fill out critter name");
-    return;
-  } else if (type.value === "") {
-    window.alert("Please fill out critter type");
-    return;
+    // decrease user money for buying critter
+    money -= 50;
+
+    // Update the money display
+    const moneyCol = document.getElementById("money-val");
+    moneyCol.innerText = money;
+
+    // Send the current money value to the server
+    recordMoney(money);
+
+    //Validation error messages
+    if (name.value === "") {
+      window.alert("Please fill out critter name");
+      return;
+    } else if (type.value === "") {
+      window.alert("Please fill out critter type");
+      return;
+    }
+    //Create json object with user input
+    const json = {
+      name: name.value,
+      type: type.value,
+      lifepoints: lifepoints,
+    };
+    const body = JSON.stringify(json);
+    console.log(body);
+    const newCritter = await fetch("/addCritter", {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
+    console.log("show new critter");
+    let data = await newCritter.json();
+    console.log("add: " + JSON.stringify(data));
+    showCritter(data);
+    window.alert("Congratulations on your new Critter!");
+  } else {
+    console.log("Critter has not been added.");
+    window.alert("You do not have enough money to buy a critter.");
   }
-  //Create json object with user input
-  const json = {
-    name: name.value,
-    type: type.value,
-    lifepoints: 0,
-  };
-  const body = JSON.stringify(json);
-  console.log(body);
-  const newCritter = await fetch("/addCritter", {
-    method: "POST",
-    body,
-    headers: { "Content-Type": "application/json" },
-  });
-  console.log("show new critter");
-  let data = await newCritter.json();
-  console.log("add: " + JSON.stringify(data));
-  showCritter(data);
 };
 
 // display critter
@@ -317,6 +337,8 @@ const feedCritter = async function (name) {
     const foodCol = document.getElementById("food-val");
     foodCol.innerText = food;
     showCritter(data);
+  } else {
+    window.alert("You do not have enough food to feed your critter.");
   }
 };
 
@@ -336,6 +358,8 @@ const exerciseCritter = async function (name) {
     const exerciseCol = document.getElementById("exercise-val");
     exerciseCol.innerText = exercise;
     showCritter(data);
+  } else {
+    window.alert("You do not have enough exercise to exercise your critter.");
   }
 };
 
@@ -355,6 +379,8 @@ const sleepCritter = async function (name) {
     const sleepCol = document.getElementById("sleep-val");
     sleepCol.innerText = sleep;
     showCritter(data);
+  } else {
+    window.alert("You do not have enough sleep to sleep your critter.");
   }
 };
 
