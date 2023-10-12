@@ -267,7 +267,7 @@ const showCritter = function (data) {
   let resultsTable = document.querySelector("#resultsTable");
   resultsTable.innerHTML =
     "<tr><th>Critter Name</th><th>Type</th><th>Life Points</th><th>Feed</th><th>Exercise</th><th>Sleep</th></tr>";
-  
+
   data.forEach((item) => {
     console.log("show results: " + JSON.stringify(Object.values(item)));
     formatTable(item, resultsTable);
@@ -275,7 +275,7 @@ const showCritter = function (data) {
 };
 
 const formatTable = function (critter, resultsTable) {
-  console.log(resultsTable);
+  // console.log(resultsTable);
   // create new row in table
   const row = resultsTable.insertRow();
   const cellName = row.insertCell(); // create new cell
@@ -284,10 +284,78 @@ const formatTable = function (critter, resultsTable) {
   cellType.innerHTML = critter.type; // add data to cell
   const cellLifePoints = row.insertCell(); // create new cell
   cellLifePoints.innerHTML = critter.lifepoints; // add data to cell
+
+  console.log(critter);
   // in last column, create a button to remove items
-  row.innerHTML += "<td>" + `<button id="feedButton" onclick="feed(\'${critter._id}\')">Feed (+5)</button>` + "</td>";
-  row.innerHTML += "<td>" + `<button id="exerciseButton" onclick="exercise(\'${critter._id}\')">Exercise (+3)</button>` + "</td>";
-  row.innerHTML += "<td>" + `<button id="sleepButton" onclick="sleep(\'${critter._id}\')">Sleep (+1)</button>` + "</td>";
+  row.innerHTML +=
+    "<td>" +
+    `<button id="feedButton" onclick="feedCritter(\'${critter.name}\')">Feed (+5)</button>` +
+    "</td>";
+  row.innerHTML +=
+    "<td>" +
+    `<button id="exerciseButton" onclick="exerciseCritter(\'${critter.name}\')">Exercise (+3)</button>` +
+    "</td>";
+  row.innerHTML +=
+    "<td>" +
+    `<button id="sleepButton" onclick="sleepCritter(\'${critter.name}\')">Sleep (+1)</button>` +
+    "</td>";
+};
+
+const feedCritter = async function (name) {
+  if (food > 0) {
+    food -= 1;
+    const newData = {
+      name: name,
+    };
+    let body = JSON.stringify(newData);
+    const updatedItem = await fetch("/feedCritter", {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
+    const data = await updatedItem.json();
+    const foodCol = document.getElementById("food-val");
+    foodCol.innerText = food;
+    showCritter(data);
+  }
+};
+
+const exerciseCritter = async function (name) {
+  if (exercise > 0) {
+    exercise -= 1;
+    const newData = {
+      name: name,
+    };
+    let body = JSON.stringify(newData);
+    const updatedItem = await fetch("/exerciseCritter", {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
+    const data = await updatedItem.json();
+    const exerciseCol = document.getElementById("exercise-val");
+    exerciseCol.innerText = exercise;
+    showCritter(data);
+  }
+};
+
+const sleepCritter = async function (name) {
+  if (sleep > 0) {
+    sleep -= 1;
+    const newData = {
+      name: name,
+    };
+    let body = JSON.stringify(newData);
+    const updatedItem = await fetch("/sleepCritter", {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
+    const data = await updatedItem.json();
+    const sleepCol = document.getElementById("sleep-val");
+    sleepCol.innerText = sleep;
+    showCritter(data);
+  }
 };
 
 // initialize the page
@@ -319,6 +387,6 @@ window.onload = function () {
   })
     .then((response) => response.json())
     .then((json) => {
-      showCritter(json, true);
+      showCritter(json);
     });
 };
