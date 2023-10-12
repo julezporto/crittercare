@@ -54,6 +54,7 @@ app.use((req, res, next) => {
 // user login
 app.post("/create", async (req, res) => {
   let username = req.body.username;
+  user = username;
   const userAlreadyCreated = await userCollection.findOne({
     username: username,
   });
@@ -61,24 +62,21 @@ app.post("/create", async (req, res) => {
     //   let label = document.getElementById("createAccountFail")
     //   label.innerHTML = "Username already used, please choose a different username"
   } else {
-    
-    const result = await userCollection.insertOne(
-      {
-        username: username,
-        password: req.body.password,
-        money: 0,
-        food: 0,
-        exercise: 0,
-        sleep: 0
-      }
-    );
+    const result = await userCollection.insertOne({
+      username: username,
+      password: req.body.password,
+      money: 0,
+      food: 0,
+      exercise: 0,
+      sleep: 0,
+    });
     req.session.username = username;
     res.redirect("game.html");
   }
 });
 
 app.get("/createUser", (req, res, next) => {
-  res.render("createUser", {msg: "", layout: false});
+  res.render("createUser", { msg: "", layout: false });
 });
 
 app.post("/login", async (req, res, next) => {
@@ -134,21 +132,19 @@ app.get("/main.html", (req, res) => {
 
 // get user data
 app.get("/getUserData", async (req, res) => {
-  
   try {
     const username = req.session.username;
-    
+
     if (!username) {
       // Ensure the user is logged in
       return res.status(401).json({ error: "Unauthorized" });
     }
-    
+
     const userData = await userCollection
       .find({ username: req.session.username })
       .toArray();
 
     res.status(200).json(userData);
-    
   } catch (error) {
     console.error("Error fetching user data:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -261,6 +257,135 @@ app.post("/updateSleep", async (req, res) => {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
+});
+
+app.post("/feedCritter", async (req, res) => {
+  let name = req.body.name;
+  const critters = await collection.find({ user: user }).toArray();
+  let userAccount = await userCollection.findOne({ username: user });
+  let type = null;
+  let lifepoints = null;
+  let oldLifePoints = 0;
+  critters.forEach((item) => {
+    if (item.name == name) {
+      type = item.type;
+      lifepoints = item.lifepoints;
+      oldLifePoints = lifepoints;
+    }
+  });
+  let updateSleep = await collection.updateOne(
+    {
+      user: user,
+      name: name,
+    },
+    {
+      $set: {
+        user: user,
+        name: name,
+        type: type,
+        lifepoints: oldLifePoints + 5,
+      },
+    }
+  );
+  let oldFood = 0;
+  oldFood = userAccount.food;
+  let updateUser = await userCollection.updateOne(
+    { username: user },
+    {
+      $set: {
+        username: user,
+        food: oldFood - 1,
+      },
+    }
+  );
+  const userList = await collection.find({ user: user }).toArray();
+  res.json(userList);
+});
+
+app.post("/exerciseCritter", async (req, res) => {
+  let name = req.body.name;
+  const critters = await collection.find({ user: user }).toArray();
+  let userAccount = await userCollection.findOne({ username: user });
+  let type = null;
+  let lifepoints = null;
+  let oldLifePoints = 0;
+  critters.forEach((item) => {
+    if (item.name == name) {
+      type = item.type;
+      lifepoints = item.lifepoints;
+      oldLifePoints = lifepoints;
+    }
+  });
+  let updateSleep = await collection.updateOne(
+    {
+      user: user,
+      name: name,
+    },
+    {
+      $set: {
+        user: user,
+        name: name,
+        type: type,
+        lifepoints: oldLifePoints + 3,
+      },
+    }
+  );
+  let oldExercise = 0;
+  oldExercise = userAccount.exercise;
+  let updateUser = await userCollection.updateOne(
+    { username: user },
+    {
+      $set: {
+        username: user,
+        exercise: oldExercise - 1,
+      },
+    }
+  );
+  const userList = await collection.find({ user: user }).toArray();
+  res.json(userList);
+});
+
+app.post("/sleepCritter", async (req, res) => {
+  let name = req.body.name;
+  const critters = await collection.find({ user: user }).toArray();
+  let userAccount = await userCollection.findOne({ username: user });
+  let type = null;
+  let lifepoints = null;
+  let oldLifePoints = 0;
+  critters.forEach((item) => {
+    if (item.name == name) {
+      type = item.type;
+      lifepoints = item.lifepoints;
+      oldLifePoints = lifepoints;
+    }
+  });
+  let updateSleep = await collection.updateOne(
+    {
+      user: user,
+      name: name,
+    },
+    {
+      $set: {
+        user: user,
+        name: name,
+        type: type,
+        lifepoints: oldLifePoints + 1,
+      },
+    }
+  );
+  let oldSleep = 0;
+  oldSleep = userAccount.sleep;
+  let updateUser = await userCollection.updateOne(
+    { username: user },
+    {
+      $set: {
+        username: user,
+        sleep: oldSleep - 1,
+      },
+    }
+  );
+  const userList = await collection.find({ user: user }).toArray();
+  res.json(userList);
 });
 
 // to insert document into database
