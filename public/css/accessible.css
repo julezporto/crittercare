@@ -2,41 +2,16 @@
   content: " *";
   color: red;
 }
-#plantPic {
-  width: 75%;
+footer {
+  margin-top: 5%;
 }
-.inputBox-parent {
-  display: flex;
-  width: 100%;
+#instructions {
+  margin-bottom: 1%;
 }
-.inputBox-child {
-  flex: 1;
+#logoutButton {
+  float: right;
 }
-#tocreateaccount {
-  padding-top: 5%;
-}
-table {
-  table-layout: fixed ;
-  width: 100% ;
-}
-td {
-  width: 20%;
-}
-.col1 {
-  visibility: collapse;
-}
-.col2 {
-  width: 20%;
-}
-.col3 {
-  width: 20%;
-}
-.col4 {
-  width: 20%;
-}
-.col5 {
-  width: 20%;
-}
-.col6 {
-  width: 20%;
+#pug-pic {
+  width: 25%;
+  float: right;
 }
