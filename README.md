@@ -1,6 +1,6 @@
-# Webware Final Project
+# Critter Care
 
-### Webware Final Project: [https://crittercare.glitch.me/](https://crittercare.glitch.me/)
+### WPI Webware Final Project: [https://crittercare.glitch.me/](https://crittercare.glitch.me/)
 Created by Juliana Porto, Julie Vieira, and Nicole Burgess
 
 ## Welcome to Critter Care!
@@ -29,6 +29,15 @@ If a critter runs out of lifepoints, you will no longer be able to feed it, exer
 - The [sakura](https://oxal.org/projects/sakura/) CSS classless framework was used for the bulk of styling. Additional CSS overriding was used for various accessibility and functionality purposes.
 - User logins are verified using a table in the MongoDB database that stores all usernames and passwords.
 - Implemented accessibility features using some of W3C's tips for writing, tips for designing, and tips for development.
+- Added media queries for mobile UI stycling.
+
+As explained above, we took various pieces of what we learned throughout the term and implemented them into one fun and engaging project! The game logic proved itself much more challenging than the logic each of us used in A3 and working as a group on such an intense full-stack project also had its benefits and downfalls. Overall, we learned a lot and created a complex and successful final project that displays our skills and that we are proud of!
+
+### Challenges we encountered:
+
+- Having to change various html structures (example: changing how we displayed critters from a list to a table) for easier implementation.
+- Making sure everyone understood the game design and logic before digging into the code.
+- Using various functions created by other team members to minimize extra work and/or repetitive code.
 
 ### What we learned:
 
@@ -36,3 +45,25 @@ If a critter runs out of lifepoints, you will no longer be able to feed it, exer
 - The importance of implementing accessibility features.
 - Why you should thoroughly plan our your application design and logic before starting any code.
 - The advantages and limitations of the browser.
+
+### Contribution Breakdown:
+
+| Task                              | Member                    |
+| :-------------------------------- | :------------------------ |
+| Project Concept                   | Juliana, Julie, & Nicole  |
+| UI Design                         | Juliana                   |
+| User Login Functionality          | Juliana                   |
+| Create User Functionality         | Juliana & Julie           |
+| Money Clicker Button              | Juliana                   |
+| Buy Food Button                   | Juliana                   |
+| Buy Exercise Button               | Juliana                   |
+| Buy Sleep Button                  | Juliana                   |
+| Buy Critter Button                | Julie                     |
+| Feed Critter Button               | Julie                     |
+| Exercise Critter Button           | Julie                     |
+| Sleep Critter Button              | Julie                     |
+| Lifepoint Decrease Functionality  | Juliana                   |
+| Presentation                      | Juliana, Julie, & Nicole  |
+| READ.ME                           | Juliana                   |
+
+### Demo Video: 

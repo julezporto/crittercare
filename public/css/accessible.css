@@ -18,16 +18,23 @@ footer {
   width: 25%;
   float: right;
 }
+#paw-logo {
+  width: 7.5%;
+  float: left;
+  padding-right: 1%;
+}
+#how-to {
+  margin-top: 4%;
+}
 
 /* Mobile view fixes */
 @media only screen and (max-device-width: 480px) {
   button {
     margin-bottom: 2.5%;
     margin-top: 2.5%;
-    
   }
   body {
-    width: 90%;
+    width: 85%;
   }
   .critter {
     width: 100%;
@@ -39,5 +46,14 @@ footer {
   #pug-pic {
     width: 40%;
     padding: 2.5%;
+  }
+  #paw-logo {
+    width: 10%;
+    float: left;
+    padding-right: 1%;
+  }
+  #how-to {
+    margin-top: 5%;
+    margin-bottom: 2%;
   }
 }
