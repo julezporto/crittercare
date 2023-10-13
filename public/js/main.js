@@ -280,9 +280,12 @@ const submit = async function (event) {
     console.log("Critter has not been added.");
     window.alert("You do not have enough money to buy a critter.");
   }
+  let frm = document.querySelector("#buy-critter-form");
+  frm.reset();
+  return false;
 };
 
-// display critter
+// display single critter
 const showCritter = function (data) {
   let resultsTable = document.querySelector("#resultsTable");
   resultsTable.innerHTML =
@@ -309,11 +312,11 @@ const formatTable = function (critter, resultsTable) {
   // in last column, create a button to remove items
   row.innerHTML +=
     "<td>" +
-    `<button id="feedButton" onclick="feedCritter(\'${critter.name}\')">Feed (+5)</button>` +
+    `<button id="feedButton" onclick="feedCritter(\'${critter.name}\')">Feed (+3)</button>` +
     "</td>";
   row.innerHTML +=
     "<td>" +
-    `<button id="exerciseButton" onclick="exerciseCritter(\'${critter.name}\')">Exercise (+3)</button>` +
+    `<button id="exerciseButton" onclick="exerciseCritter(\'${critter.name}\')">Exercise (+5)</button>` +
     "</td>";
   row.innerHTML +=
     "<td>" +
@@ -384,10 +387,82 @@ const sleepCritter = async function (name) {
   }
 };
 
+// Function to decrement life points of all critters
+const showCritterArray = function (data) {
+  let resultsTable = document.querySelector("#resultsTable");
+
+  // Clear the existing table content
+  resultsTable.innerHTML = "<tr><th>Critter Name</th><th>Type</th><th>Life Points</th><th>Feed</th><th>Exercise</th><th>Sleep</th></tr>";
+
+  // Check if data is an array
+  if (Array.isArray(data)) {
+    data.forEach((item) => {
+      formatTable(item, resultsTable);
+    });
+  }
+};
+
+// Modify the killCritters function
+const killCritters = async () => {
+  // Fetch all critters
+  const critters = await fetch("/data").then((response) => response.json());
+  
+  console.log(critters);
+
+  // Call the updated showCritterArray function
+  showCritterArray(critters);
+
+  // Loop through critters and decrement life points
+  for (const critter of critters) {
+    if (critter.lifepoints > 0) {
+      const updatedLifePoints = critter.lifepoints - 1;
+
+      // Send a request to update the critter's life points
+      const updatedItem = await fetch("/updateLifePoints", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: critter.name, lifepoints: updatedLifePoints }),
+      });
+      
+      console.log("Updated lifepoints");
+
+      const data = await updatedItem.json();
+      // Update the specific row for the critter
+      updateTableRow(data);
+      
+      console.log("Updated Table Entry");
+      
+    } else {
+      
+    }
+  }
+};
+
+// Function to update the table row for a critter
+const updateTableRow = function (data) {
+  let resultsTable = document.querySelector("#resultsTable");
+
+  // Find the row for the critter by its name
+  const rows = resultsTable.getElementsByTagName("tr");
+  for (let i = 1; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName("td");
+    if (cells[0].innerHTML === data.name) {
+      cells[2].innerHTML = data.lifepoints; // Update the life points column
+      break;
+    }
+  }
+};
+
+
 // initialize the page
 window.onload = function () {
   // Initialize the money resource table with user data
   initializeMoneyResourceTable();
+  
+  // Initialize set interval function to start 
+  setInterval(killCritters, 5000);
 
   // Initialize the money button
   const moneyButton = document.getElementById("money-button");
@@ -408,6 +483,7 @@ window.onload = function () {
   // Initialize the critter button
   const addCritter = document.querySelector("#buy-critter-button");
   addCritter.onclick = submit;
+  
   fetch("/data", {
     method: "GET",
   })

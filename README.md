@@ -1,6 +1,6 @@
 # Webware Final Project
 
-### Webware Final Project: [https://webware-final-crittercare.glitch.me/](https://webware-final-crittercare.glitch.me/)
+### Webware Final Project: [https://crittercare.glitch.me/](https://crittercare.glitch.me/)
 Created by Juliana Porto, Julie Vieira, and Nicole Burgess
 
 ## Welcome to Critter Care!
@@ -9,8 +9,10 @@ First, login to our example user account. The account information can be found b
 
 - _Username_: animalLover
 - _Password_: pass123
+
+You can also create a new account or login to an existing one, but for grading purposes this preset account will help you avoid lots of unnecessary clicking.
   
-This account currently had no critters and a starting balance of $50. You can use this $50 to buy a critter in the Buy a Critter section. Enter your critter name, select your desired critter type, then click the `Buy Critter (-$50)` button.
+This account currently has no critters and a starting balance of $50. You can use this $50 to buy a critter in the Buy a Critter section. Enter your critter name, select your desired critter type, then click the `Buy Critter (-$50)` button.
 
 After your critter has been bought, its lifepoints will begin to decrease over time. To increase your critter's lifepoints and keep it alive, buy resources (food, exercise, and sleep) and apply those resources to your specific critter.
 
