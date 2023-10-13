@@ -409,6 +409,23 @@ app.get("/data", async (req, res) => {
   res.json(userList);
 });
 
+app.post("/getLifePoints", async(req, res) => {
+  let name = req.body.name;
+  let lifepoints = null;
+  console.log("----------------------------------")
+  const userList = await collection.find({
+    user: user,
+    name: name
+  }).toArray();
+  userList.forEach((item) => {
+    lifepoints = item.lifepoints;
+    console.log("add: " + JSON.stringify(Object.values(item)));
+  });
+  console.log(lifepoints)
+  console.log("----------------------------------")
+  res.json(lifepoints);
+});
+
 // Update critter's life points
 app.post("/updateLifePoints", async (req, res) => {
   const name = req.body.name;
