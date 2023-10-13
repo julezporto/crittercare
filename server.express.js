@@ -273,7 +273,7 @@ app.post("/feedCritter", async (req, res) => {
       oldLifePoints = lifepoints;
     }
   });
-  let updateSleep = await collection.updateOne(
+  let updateFood = await collection.updateOne(
     {
       user: user,
       name: name,
@@ -283,7 +283,7 @@ app.post("/feedCritter", async (req, res) => {
         user: user,
         name: name,
         type: type,
-        lifepoints: oldLifePoints + 5,
+        lifepoints: oldLifePoints + 3,
       },
     }
   );
@@ -316,7 +316,7 @@ app.post("/exerciseCritter", async (req, res) => {
       oldLifePoints = lifepoints;
     }
   });
-  let updateSleep = await collection.updateOne(
+  let updateExercise = await collection.updateOne(
     {
       user: user,
       name: name,
@@ -326,7 +326,7 @@ app.post("/exerciseCritter", async (req, res) => {
         user: user,
         name: name,
         type: type,
-        lifepoints: oldLifePoints + 3,
+        lifepoints: oldLifePoints + 5,
       },
     }
   );
@@ -408,6 +408,54 @@ app.get("/data", async (req, res) => {
   const userList = await collection.find({ user: user }).toArray();
   res.json(userList);
 });
+
+app.post("/getLifePoints", async(req, res) => {
+  let name = req.body.name;
+  let lifepoints = null;
+  console.log("----------------------------------")
+  const userList = await collection.find({
+    user: user,
+    name: name
+  }).toArray();
+  userList.forEach((item) => {
+    lifepoints = item.lifepoints;
+    console.log("add: " + JSON.stringify(Object.values(item)));
+  });
+  console.log(lifepoints)
+  console.log("----------------------------------")
+  res.json(lifepoints);
+});
+
+// Update critter's life points
+app.post("/updateLifePoints", async (req, res) => {
+  const name = req.body.name;
+  const newLifePoints = req.body.lifepoints;
+
+  try {
+    // Update the critter's life points in the database
+    const result = await collection.updateOne(
+      {
+        user: user,
+        name: name,
+      },
+      {
+        $set: {
+          lifepoints: newLifePoints,
+        },
+      }
+    );
+
+    if (result.modifiedCount === 1) {
+      return res.status(200).json({ success: true });
+    } else {
+      return res.status(500).json({ error: "Failed to update critter's life points" });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 
 // Start the server
 app.listen(process.env.PORT || port);

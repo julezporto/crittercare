@@ -17,7 +17,7 @@ async function initializeMoneyResourceTable() {
 
     // Parse the response to get user data
     const userData = await response.json();
-    console.log(userData);
+    // console.log(userData);
 
     if (!userData) {
       console.error("User data is missing or invalid.");
@@ -169,6 +169,7 @@ const addFood = () => {
     console.log("Food has been successfully added.");
   } else {
     console.log("Food has not been added.");
+    window.alert("You do not have enough money to buy food.");
   }
 };
 
@@ -197,6 +198,7 @@ const addExercise = () => {
     console.log("Exercise has been successfully added.");
   } else {
     console.log("Exercise has not been added.");
+    window.alert("You do not have enough money to buy exercise.");
   }
 };
 
@@ -225,51 +227,72 @@ const addSleep = () => {
     console.log("Sleep has been successfully added.");
   } else {
     console.log("Sleep has not been added.");
+    window.alert("You do not have enough money to buy sleep.");
   }
 };
 
 // submit a critter
 const submit = async function (event) {
   event.preventDefault();
-  const name = document.querySelector("#critter-name");
-  const type = document.querySelector("#critter-type");
-  const lifepoints = 0;
+  // Check to see if user has enough money to buy critter
+  if (money >= 50) {
+    const name = document.querySelector("#critter-name");
+    const type = document.querySelector("#critter-type");
+    const lifepoints = 100;
 
-  //Validation error messages
-  if (name.value === "") {
-    window.alert("Please fill out critter name");
-    return;
-  } else if (type.value === "") {
-    window.alert("Please fill out critter type");
-    return;
+    // decrease user money for buying critter
+    money -= 50;
+
+    // Update the money display
+    const moneyCol = document.getElementById("money-val");
+    moneyCol.innerText = money;
+
+    // Send the current money value to the server
+    recordMoney(money);
+
+    //Validation error messages
+    if (name.value === "") {
+      window.alert("Please fill out critter name");
+      return;
+    } else if (type.value === "") {
+      window.alert("Please fill out critter type");
+      return;
+    }
+    //Create json object with user input
+    const json = {
+      name: name.value,
+      type: type.value,
+      lifepoints: lifepoints,
+    };
+    const body = JSON.stringify(json);
+    console.log(body);
+    const newCritter = await fetch("/addCritter", {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
+    console.log("show new critter");
+    let data = await newCritter.json();
+    console.log("add: " + JSON.stringify(data));
+    showCritter(data);
+    window.alert("Congratulations on your new Critter!");
+  } else {
+    console.log("Critter has not been added.");
+    window.alert("You do not have enough money to buy a critter.");
   }
-  //Create json object with user input
-  const json = {
-    name: name.value,
-    type: type.value,
-    lifepoints: 0,
-  };
-  const body = JSON.stringify(json);
-  console.log(body);
-  const newCritter = await fetch("/addCritter", {
-    method: "POST",
-    body,
-    headers: { "Content-Type": "application/json" },
-  });
-  console.log("show new critter");
-  let data = await newCritter.json();
-  console.log("add: " + JSON.stringify(data));
-  showCritter(data);
+  let frm = document.querySelector("#buy-critter-form");
+  frm.reset();
+  return false;
 };
 
-// display critter
+// display single critter
 const showCritter = function (data) {
   let resultsTable = document.querySelector("#resultsTable");
   resultsTable.innerHTML =
     "<tr><th>Critter Name</th><th>Type</th><th>Life Points</th><th>Feed</th><th>Exercise</th><th>Sleep</th></tr>";
 
   data.forEach((item) => {
-    console.log("show results: " + JSON.stringify(Object.values(item)));
+    // console.log("show results: " + JSON.stringify(Object.values(item)));
     formatTable(item, resultsTable);
   });
 };
@@ -285,15 +308,15 @@ const formatTable = function (critter, resultsTable) {
   const cellLifePoints = row.insertCell(); // create new cell
   cellLifePoints.innerHTML = critter.lifepoints; // add data to cell
 
-  console.log(critter);
+  // console.log(critter);
   // in last column, create a button to remove items
   row.innerHTML +=
     "<td>" +
-    `<button id="feedButton" onclick="feedCritter(\'${critter.name}\')">Feed (+5)</button>` +
+    `<button id="feedButton" onclick="feedCritter(\'${critter.name}\')">Feed (+3)</button>` +
     "</td>";
   row.innerHTML +=
     "<td>" +
-    `<button id="exerciseButton" onclick="exerciseCritter(\'${critter.name}\')">Exercise (+3)</button>` +
+    `<button id="exerciseButton" onclick="exerciseCritter(\'${critter.name}\')">Exercise (+5)</button>` +
     "</td>";
   row.innerHTML +=
     "<td>" +
@@ -302,59 +325,171 @@ const formatTable = function (critter, resultsTable) {
 };
 
 const feedCritter = async function (name) {
-  if (food > 0) {
-    food -= 1;
-    const newData = {
-      name: name,
-    };
-    let body = JSON.stringify(newData);
-    const updatedItem = await fetch("/feedCritter", {
-      method: "POST",
-      body,
-      headers: { "Content-Type": "application/json" },
-    });
-    const data = await updatedItem.json();
-    const foodCol = document.getElementById("food-val");
-    foodCol.innerText = food;
-    showCritter(data);
+  const newData = {
+    name: name,
+  };
+  let body = JSON.stringify(newData);
+  const lifepoint = await fetch("/getLifePoints", {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
+  const lp = await lifepoint.json();
+  if (lp > 0) {
+    if (food > 0) {
+      food -= 1;
+      const updatedItem = await fetch("/feedCritter", {
+        method: "POST",
+        body,
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await updatedItem.json();
+      const foodCol = document.getElementById("food-val");
+      foodCol.innerText = food;
+      showCritter(data);
+    } else {
+      window.alert(
+        "You do not have enough food resources to feed your critter."
+      );
+    }
+  } else {
+    window.alert("Critter is invalid RIP");
   }
 };
 
 const exerciseCritter = async function (name) {
-  if (exercise > 0) {
-    exercise -= 1;
-    const newData = {
-      name: name,
-    };
-    let body = JSON.stringify(newData);
-    const updatedItem = await fetch("/exerciseCritter", {
-      method: "POST",
-      body,
-      headers: { "Content-Type": "application/json" },
-    });
-    const data = await updatedItem.json();
-    const exerciseCol = document.getElementById("exercise-val");
-    exerciseCol.innerText = exercise;
-    showCritter(data);
+  const newData = {
+    name: name,
+  };
+  let body = JSON.stringify(newData);
+  const lifepoint = await fetch("/getLifePoints", {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
+  const lp = await lifepoint.json();
+  if (lp > 0) {
+    if (exercise > 0) {
+      exercise -= 1;
+      const updatedItem = await fetch("/exerciseCritter", {
+        method: "POST",
+        body,
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await updatedItem.json();
+      const exerciseCol = document.getElementById("exercise-val");
+      exerciseCol.innerText = exercise;
+      showCritter(data);
+    } else {
+      window.alert(
+        "You do not have enough exercise resources to exercise your critter."
+      );
+    }
+  } else {
+    window.alert("Critter is invalid RIP");
   }
 };
 
 const sleepCritter = async function (name) {
-  if (sleep > 0) {
-    sleep -= 1;
-    const newData = {
-      name: name,
-    };
-    let body = JSON.stringify(newData);
-    const updatedItem = await fetch("/sleepCritter", {
-      method: "POST",
-      body,
-      headers: { "Content-Type": "application/json" },
+  const newData = {
+    name: name,
+  };
+  let body = JSON.stringify(newData);
+  const lifepoint = await fetch("/getLifePoints", {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
+  const lp = await lifepoint.json();
+  if (lp > 0) {
+    if (sleep > 0) {
+      sleep -= 1;
+      const updatedItem = await fetch("/sleepCritter", {
+        method: "POST",
+        body,
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await updatedItem.json();
+      const sleepCol = document.getElementById("sleep-val");
+      sleepCol.innerText = sleep;
+      showCritter(data);
+    } else {
+      window.alert(
+        "You do not have enough sleep resources to rest your critter."
+      );
+    }
+  } else {
+    window.alert("Critter is invalid RIP");
+  }
+};
+
+// Function to decrement life points of all critters
+const showCritterArray = function (data) {
+  let resultsTable = document.querySelector("#resultsTable");
+
+  // Clear the existing table content
+  resultsTable.innerHTML =
+    "<tr><th>Critter Name</th><th>Type</th><th>Life Points</th><th>Feed</th><th>Exercise</th><th>Sleep</th></tr>";
+
+  // Check if data is an array
+  if (Array.isArray(data)) {
+    data.forEach((item) => {
+      formatTable(item, resultsTable);
     });
-    const data = await updatedItem.json();
-    const sleepCol = document.getElementById("sleep-val");
-    sleepCol.innerText = sleep;
-    showCritter(data);
+  }
+};
+
+// Modify the killCritters function
+const killCritters = async () => {
+  // Fetch all critters
+  const critters = await fetch("/data").then((response) => response.json());
+
+  // console.log(critters);
+
+  // Call the updated showCritterArray function
+  showCritterArray(critters);
+
+  // Loop through critters and decrement life points
+  for (const critter of critters) {
+    if (critter.lifepoints > 0) {
+      const updatedLifePoints = critter.lifepoints - 1;
+
+      // Send a request to update the critter's life points
+      const updatedItem = await fetch("/updateLifePoints", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: critter.name,
+          lifepoints: updatedLifePoints,
+        }),
+      });
+
+      console.log("Updated lifepoints");
+
+      const data = await updatedItem.json();
+      // Update the specific row for the critter
+      updateTableRow(data);
+
+      console.log("Updated Table Entry");
+    } else {
+    }
+  }
+};
+
+// Function to update the table row for a critter
+const updateTableRow = function (data) {
+  let resultsTable = document.querySelector("#resultsTable");
+
+  // Find the row for the critter by its name
+  const rows = resultsTable.getElementsByTagName("tr");
+  for (let i = 1; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName("td");
+    if (cells[0].innerHTML === data.name) {
+      cells[2].innerHTML = data.lifepoints; // Update the life points column
+      break;
+    }
   }
 };
 
@@ -362,6 +497,9 @@ const sleepCritter = async function (name) {
 window.onload = function () {
   // Initialize the money resource table with user data
   initializeMoneyResourceTable();
+
+  // Initialize set interval function to start
+  setInterval(killCritters, 5000);
 
   // Initialize the money button
   const moneyButton = document.getElementById("money-button");
@@ -382,6 +520,7 @@ window.onload = function () {
   // Initialize the critter button
   const addCritter = document.querySelector("#buy-critter-button");
   addCritter.onclick = submit;
+
   fetch("/data", {
     method: "GET",
   })
