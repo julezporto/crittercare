@@ -8,22 +8,33 @@
     <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
   </head>
   <body>
-    <h1>
-      Log in
-    </h1>
-    <form action="/login" method="POST">
-      <input type="text" name="username" placeholder="username" />
-      <input type="password" name="password" placeholder="password" />
-      <input type="submit" value="login" />
-      <p id="tocreateaccount">
-        Don't have an account? Create one below.
-      </p>
-    </form>
-    <form action = "/createUser" method="GET">
-      <input type="submit" value="Create an account"/>
-    </form>
+    <header>
+      <h1>Critter Care</h1>
+      <img
+        id="pug-pic"
+        src="https://cdn.glitch.global/393e5abf-4650-448c-8842-bf58cc4433ca/charlesdeluvio-Mv9hjnEUHR4-unsplash.jpg?v=1697113733508"
+        alt="Black pug wearing a sweater"
+      />
+      <h2>
+        Log in
+      </h2>
+    </header>
+    <main>
+      <form action="/login" method="POST">
+        <input type="text" name="username" placeholder="username" />
+        <input type="password" name="password" placeholder="password" />
+        <input type="submit" value="login" />
+        <p id="tocreateaccount">
+          Don't have an account? Create one below.
+        </p>
+      </form>
+      <form action="/createUser" method="GET">
+        <input type="submit" value="Create an account" />
+      </form>
 
-    {{{msg}}}
+      {{{msg}}}
+
+    </main>
 
   </body>
 </html>

@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
   <head>
     <title>Virtual Pet Game - Create Account</title>
@@ -10,15 +9,25 @@
     <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
   </head>
   <body>
-    <h1>Create your account</h1>
-    <form action="/create" method="POST">
-      <input type="text" name="username" placeholder="username" />
-      <input type="password" name="password" placeholder="password" />
-      <input type="submit" value="create" />
-    </form>
-    <p id="createAccountFail"></p>
-    <form action="/" method="GET">
-       <input type="submit" value="Back to login"/>
-     </form>
+    <header>
+      <h1>Critter Care</h1>
+      <img
+        id="pug-pic"
+        src="https://cdn.glitch.global/393e5abf-4650-448c-8842-bf58cc4433ca/charlesdeluvio-Mv9hjnEUHR4-unsplash.jpg?v=1697113733508"
+        alt="Black pug wearing a sweater"
+      />
+      <h2>Create your account</h2>
+    </header>
+    <main>
+      <form action="/create" method="POST">
+        <input type="text" name="username" placeholder="username" />
+        <input type="password" name="password" placeholder="password" />
+        <input type="submit" value="create" />
+      </form>
+      <p id="createAccountFail"></p>
+      <form action="/" method="GET">
+        <input type="submit" value="Back to login" />
+      </form>
+    </main>
   </body>
 </html>
