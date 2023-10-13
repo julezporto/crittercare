@@ -14,7 +14,7 @@ You can also create a new account or login to an existing one, but for grading p
   
 This account currently has no critters and a starting balance of $50. You can use this $50 to buy a critter in the Buy a Critter section. Enter your critter name, select your desired critter type, then click the `Buy Critter (-$50)` button.
 
-After your critter has been bought, its lifepoints will begin to decrease over time. To increase your critter's lifepoints and keep it alive, buy resources (food, exercise, and sleep) and apply those resources to your specific critter.
+After your critter has been bought, its lifepoints will begin to decrease over time. To increase your critter's lifepoints and keep it alive, buy resources using the `+$$$` button or hitting the space bar on your keyboard, and apply those resources to your specific critter.
 
 As you continue the game, you can buy more critters - _just remember to keep them all alive_!
 
@@ -64,6 +64,7 @@ As explained above, we took various pieces of what we learned throughout the ter
 | Sleep Critter Button              | Julie                     |
 | Lifepoint Decrease Functionality  | Juliana & Nicole          |
 | Presentation                      | Juliana, Julie, & Nicole  |
+| Video Demo                        | Juliana, Julie, & Nicole  |
 | READ.ME                           | Juliana                   |
 
-### Demo Video: 
+### Demo Video: [CS4241 Final Project Critter Care, Nicole, Juliana, Julie](https://www.youtube.com/watch?v=LpaoW_cZKPI)
