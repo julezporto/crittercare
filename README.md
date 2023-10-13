@@ -18,6 +18,8 @@ After your critter has been bought, its lifepoints will begin to decrease over t
 
 As you continue the game, you can buy more critters - _just remember to keep them all alive_!
 
+If a critter runs out of lifepoints, you will no longer be able to feed it, exercise it, or sleep it; however, it will stay in your critter table so that it's memory lives on!
+
 ### To accomplish this:
 
 - Frontend UI components were created using HTML, CSS, JavaScript, and Handlebars JS.

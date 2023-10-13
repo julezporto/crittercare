@@ -1,3 +1,4 @@
+// Setup express server, mongodb, handlebars, cookies, directory, and port
 const express = require("express"),
   { MongoClient, ObjectId } = require("mongodb"),
   hbs = require("express-handlebars").engine,
@@ -7,15 +8,18 @@ const express = require("express"),
   dir = "public/",
   port = 3000;
 
+// Continue setting up express server
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(dir));
 app.use(express.static("views"));
 
+// Continute setting us handlebars
 app.engine("handlebars", hbs());
 app.set("view engine", "handlebars");
 app.set("views", "./views");
 
+// Continue setting up cookies
 app.use(
   cookie({
     name: "session",
@@ -23,15 +27,18 @@ app.use(
   })
 );
 
+// Continue setting up mongodb
 const url = `mongodb+srv://${process.env.USER}:${process.env.PASS}@cluster0.soifdqr.mongodb.net/?retryWrites=true&w=majority`;
-
 const client = new MongoClient(url);
 
-// connect to plant data set
+// Connect to user & points datasets
 let collection = null;
 let userCollection = null;
+
+// Create current user
 let user = null;
 
+// Connect to mongodb
 async function run() {
   await client.connect();
   collection = await client.db("FinalProjectWebware").collection("Points");
@@ -40,7 +47,7 @@ async function run() {
 
 run();
 
-// middleware to check connection so you don't have to check inside of every route handler
+// Middleware to check connection so we don't have to check inside of every route handler
 app.use((req, res, next) => {
   if (collection !== null && userCollection != null) {
     next();
@@ -51,7 +58,7 @@ app.use((req, res, next) => {
   }
 });
 
-// user login
+// Create new user
 app.post("/create", async (req, res) => {
   let username = req.body.username;
   user = username;
@@ -62,6 +69,7 @@ app.post("/create", async (req, res) => {
     //   let label = document.getElementById("createAccountFail")
     //   label.innerHTML = "Username already used, please choose a different username"
   } else {
+    // If user doesn't already exist, create a new one in the database
     const result = await userCollection.insertOne({
       username: username,
       password: req.body.password,
@@ -70,7 +78,9 @@ app.post("/create", async (req, res) => {
       exercise: 0,
       sleep: 0,
     });
+    // Set the cookie session to the current user
     req.session.username = username;
+    // Send user to game page
     res.redirect("game.html");
   }
 });
@@ -79,6 +89,7 @@ app.get("/createUser", (req, res, next) => {
   res.render("createUser", { msg: "", layout: false });
 });
 
+// Login existing user
 app.post("/login", async (req, res, next) => {
   user = req.body.username;
   let password = req.body.password;
@@ -87,19 +98,23 @@ app.post("/login", async (req, res, next) => {
     .collection("Users")
     .find()
     .toArray();
-
+  
   req.session.login = false;
 
+  // Check to see if username and password match
   accounts.forEach((e) => {
     if (password === e.password && user === e.username) {
+      // If match, start user session
       req.session.login = true;
       req.session.username = user;
     }
   });
 
+  // Send logged in user to game page
   if (req.session.login) {
     res.redirect("game.html");
   } else {
+    // Send incorrect password error
     res.render("index", {
       msg: "login failed: incorrect password",
       layout: false,
@@ -111,11 +126,7 @@ app.get("/", (req, res, next) => {
   res.render("index", { msg: "", layout: false });
 });
 
-app.get("/createUser", (req, res, next) => {
-  res.render("createUser", { msg: "", layout: false });
-});
-
-// add some middleware that always sends unauthenicaetd users to the login page
+// Add some middleware that always sends unauthenicaetd users to the login page
 app.use(function (req, res, next) {
   if (req.session.login === true) {
     next();
@@ -130,9 +141,10 @@ app.get("/main.html", (req, res) => {
   res.render("main", { msg: "success you have logged in", layout: false });
 });
 
-// get user data
+// Get current user's data
 app.get("/getUserData", async (req, res) => {
   try {
+    // Set username to current user
     const username = req.session.username;
 
     if (!username) {
@@ -140,21 +152,26 @@ app.get("/getUserData", async (req, res) => {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
+    // Get user's data
     const userData = await userCollection
       .find({ username: req.session.username })
       .toArray();
 
     res.status(200).json(userData);
+    
   } catch (error) {
     console.error("Error fetching user data:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-// update money value
+// Update money value
 app.post("/updateMoney", async (req, res) => {
   try {
+    // Set username to current user
     const username = req.session.username;
+    
+    // Set new money value
     const newMoneyValue = req.body.money;
 
     if (!username || typeof newMoneyValue !== "number") {
@@ -178,10 +195,13 @@ app.post("/updateMoney", async (req, res) => {
   }
 });
 
-// update food value
+// Update food value
 app.post("/updateFood", async (req, res) => {
   try {
+    // Set username to current user
     const username = req.session.username;
+    
+    // Set new food value
     const newFoodValue = req.body.food;
 
     if (!username || typeof newFoodValue !== "number") {
@@ -205,10 +225,13 @@ app.post("/updateFood", async (req, res) => {
   }
 });
 
-// update exercise value
+// Update exercise value
 app.post("/updateExercise", async (req, res) => {
   try {
+    // Set username to current user
     const username = req.session.username;
+    
+    // Set new exercise value
     const newExerciseValue = req.body.exercise;
 
     if (!username || typeof newExerciseValue !== "number") {
@@ -232,10 +255,13 @@ app.post("/updateExercise", async (req, res) => {
   }
 });
 
-// update sleep value
+// Update sleep value
 app.post("/updateSleep", async (req, res) => {
   try {
+    // Set username to current user
     const username = req.session.username;
+    
+    // Set new sleep value
     const newSleepValue = req.body.sleep;
 
     if (!username || typeof newSleepValue !== "number") {
@@ -259,13 +285,23 @@ app.post("/updateSleep", async (req, res) => {
   }
 });
 
+// Update food and lifepoint values
 app.post("/feedCritter", async (req, res) => {
+  // Set name to current critter name
   let name = req.body.name;
+  
+  // Set critters to list of current user's critters
   const critters = await collection.find({ user: user }).toArray();
+  
+  // Set userAccount to current user
   let userAccount = await userCollection.findOne({ username: user });
+  
+  // Create other critter vars to set
   let type = null;
   let lifepoints = null;
   let oldLifePoints = 0;
+  
+  // Set vars for each critter
   critters.forEach((item) => {
     if (item.name == name) {
       type = item.type;
@@ -273,6 +309,8 @@ app.post("/feedCritter", async (req, res) => {
       oldLifePoints = lifepoints;
     }
   });
+  
+  // Increase lifepoints value for critter by 3
   let updateFood = await collection.updateOne(
     {
       user: user,
@@ -287,6 +325,8 @@ app.post("/feedCritter", async (req, res) => {
       },
     }
   );
+  
+  // Decrease food value for user by 1
   let oldFood = 0;
   oldFood = userAccount.food;
   let updateUser = await userCollection.updateOne(
@@ -298,17 +338,29 @@ app.post("/feedCritter", async (req, res) => {
       },
     }
   );
+  
+  // Send back current user's critters
   const userList = await collection.find({ user: user }).toArray();
   res.json(userList);
 });
 
+// Update exercise and lifepoint values
 app.post("/exerciseCritter", async (req, res) => {
+  // Set name to current critter name
   let name = req.body.name;
+  
+  // Set critters to list of current user's critters
   const critters = await collection.find({ user: user }).toArray();
+  
+  // Set userAccount to current user
   let userAccount = await userCollection.findOne({ username: user });
+  
+  // Create other critter vars to set
   let type = null;
   let lifepoints = null;
   let oldLifePoints = 0;
+  
+  // Set vars for each critter
   critters.forEach((item) => {
     if (item.name == name) {
       type = item.type;
@@ -316,6 +368,8 @@ app.post("/exerciseCritter", async (req, res) => {
       oldLifePoints = lifepoints;
     }
   });
+  
+  // Increase lifepoints value for critter by 5
   let updateExercise = await collection.updateOne(
     {
       user: user,
@@ -330,6 +384,8 @@ app.post("/exerciseCritter", async (req, res) => {
       },
     }
   );
+  
+  // Decrease exercise value for user by 1
   let oldExercise = 0;
   oldExercise = userAccount.exercise;
   let updateUser = await userCollection.updateOne(
@@ -341,17 +397,29 @@ app.post("/exerciseCritter", async (req, res) => {
       },
     }
   );
+  
+  // Send back current user's critters
   const userList = await collection.find({ user: user }).toArray();
   res.json(userList);
 });
 
+// Update sleep and lifepoint values
 app.post("/sleepCritter", async (req, res) => {
+  // Set name to current critter name
   let name = req.body.name;
+  
+  // Set critters to list of current user's critters
   const critters = await collection.find({ user: user }).toArray();
+  
+  // Set userAccount to current user
   let userAccount = await userCollection.findOne({ username: user });
+  
+  // Create other critter vars to set
   let type = null;
   let lifepoints = null;
   let oldLifePoints = 0;
+  
+  // Set vars for each critter
   critters.forEach((item) => {
     if (item.name == name) {
       type = item.type;
@@ -359,6 +427,8 @@ app.post("/sleepCritter", async (req, res) => {
       oldLifePoints = lifepoints;
     }
   });
+  
+  // Increase lifepoints value for critter by 1
   let updateSleep = await collection.updateOne(
     {
       user: user,
@@ -373,6 +443,8 @@ app.post("/sleepCritter", async (req, res) => {
       },
     }
   );
+  
+  // Decrease sleep value for user by 1
   let oldSleep = 0;
   oldSleep = userAccount.sleep;
   let updateUser = await userCollection.updateOne(
@@ -384,11 +456,13 @@ app.post("/sleepCritter", async (req, res) => {
       },
     }
   );
+  
+  // Send back current user's critters
   const userList = await collection.find({ user: user }).toArray();
   res.json(userList);
 });
 
-// to insert document into database
+// Insert critter into database
 app.post("/addCritter", async (req, res) => {
   let result = await collection.insertOne({
     user: user,
@@ -398,37 +472,51 @@ app.post("/addCritter", async (req, res) => {
   });
 
   const userList = await collection.find({ user: user }).toArray();
+  /*
   userList.forEach((item) => {
     console.log("add: " + JSON.stringify(Object.values(item)));
   });
+  */
+  
+  // Send back list of current user's critters
   res.json(userList);
 });
 
+// Get current user's critters
 app.get("/data", async (req, res) => {
   const userList = await collection.find({ user: user }).toArray();
   res.json(userList);
 });
 
+// Get critter's lifepoints
 app.post("/getLifePoints", async(req, res) => {
+  // Set critter's name
   let name = req.body.name;
+  
+  // Create lifepoints var
   let lifepoints = null;
-  console.log("----------------------------------")
+  
+  // Get critter based on current user and critter name
   const userList = await collection.find({
     user: user,
     name: name
   }).toArray();
+  
+  // Get selected critter's lifepoints
   userList.forEach((item) => {
     lifepoints = item.lifepoints;
-    console.log("add: " + JSON.stringify(Object.values(item)));
   });
-  console.log(lifepoints)
-  console.log("----------------------------------")
+  
+  // Send back lifepoints value
   res.json(lifepoints);
 });
 
 // Update critter's life points
 app.post("/updateLifePoints", async (req, res) => {
+  // Set critter's name
   const name = req.body.name;
+  
+  // Set new lifepoint value
   const newLifePoints = req.body.lifepoints;
 
   try {
@@ -455,7 +543,6 @@ app.post("/updateLifePoints", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 // Start the server
 app.listen(process.env.PORT || port);
