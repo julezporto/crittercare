@@ -29,7 +29,7 @@ If a critter runs out of lifepoints, you will no longer be able to feed it, exer
 - The [sakura](https://oxal.org/projects/sakura/) CSS classless framework was used for the bulk of styling. Additional CSS overriding was used for various accessibility and functionality purposes.
 - User logins are verified using a table in the MongoDB database that stores all usernames and passwords.
 - Implemented accessibility features using some of W3C's tips for writing, tips for designing, and tips for development.
-- Added media queries for mobile UI stycling.
+- Added media queries for mobile UI styling.
 
 As explained above, we took various pieces of what we learned throughout the term and implemented them into one fun and engaging project! The game logic proved itself much more challenging than the logic each of us used in A3 and working as a group on such an intense full-stack project also had its benefits and downfalls. Overall, we learned a lot and created a complex and successful final project that displays our skills and that we are proud of!
 
