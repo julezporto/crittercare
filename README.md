@@ -62,7 +62,7 @@ As explained above, we took various pieces of what we learned throughout the ter
 | Feed Critter Button               | Julie                     |
 | Exercise Critter Button           | Julie                     |
 | Sleep Critter Button              | Julie                     |
-| Lifepoint Decrease Functionality  | Juliana                   |
+| Lifepoint Decrease Functionality  | Juliana & Nicole          |
 | Presentation                      | Juliana, Julie, & Nicole  |
 | READ.ME                           | Juliana                   |
 
