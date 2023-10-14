@@ -81,10 +81,13 @@ app.post("/create", async (req, res) => {
     // Set the cookie session to the current user
     req.session.username = username;
     // Send user to game page
+
     res.render("index", {
       msg: "",
       layout: false,
     });
+    res.redirect("game.html");
+
   }
 });
 
